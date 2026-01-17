@@ -1,23 +1,175 @@
+local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
 
--- 1. TOP-CENTER TOGGLE BUTTON
-local ScreenGui = Instance.new("ScreenGui", Players.LocalPlayer:WaitForChild("PlayerGui"))
-ScreenGui.Name = "HyperField_Final"
+-- 1. MAIN SCREEN GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HyperHub_System"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
-local OpenButton = Instance.new("TextButton", ScreenGui)
-OpenButton.Size = UDim2.new(0, 240, 0, 35)
-OpenButton.Position = UDim2.new(0.5, 0, 0.05, 0)
-OpenButton.AnchorPoint = Vector2.new(0.5, 0)
-OpenButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-OpenButton.Text = "Hyper Hub"
-OpenButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-OpenButton.Font = Enum.Font.SourceSans
-OpenButton.TextSize = 20
-Instance.new("UICorner", OpenButton).CornerRadius = UDim.new(0, 10)
+---------------------------------------------------------
+-- 2. THE WINDOW (HyperFrame) -
+---------------------------------------------------------
+local HyperFrame = Instance.new("Frame", ScreenGui)
+HyperFrame.Name = "HyperFrame"
+HyperFrame.BackgroundColor3 = Color3.fromRGB(173, 173, 173)
+HyperFrame.Size = UDim2.new(0.43597, 0, 0.89404, 0)
+HyperFrame.Position = UDim2.new(0.2752, 0, 0.01987, 0)
+Instance.new("UICorner", HyperFrame).CornerRadius = UDim.new(0, 30)
 
-local ArrowLabel = Instance.new("TextLabel", ScreenGui)
+-- HEADER LOGO & TEXT
+local HyperImage = Instance.new("ImageLabel", HyperFrame)
+HyperImage.Image = "rbxassetid://17759111785"
+HyperImage.Size = UDim2.new(0.06875, 0, 0.08889, 0)
+HyperImage.Position = UDim2.new(0.04375, 0, 0.02222, 0)
+HyperImage.BackgroundTransparency = 1
+
+local AuthorText = Instance.new("TextLabel", HyperFrame)
+AuthorText.Text = "Hyper UI"
+AuthorText.Size = UDim2.new(0.225, 0, 0.06667, 0)
+AuthorText.Position = UDim2.new(0.10625, 0, 0.02963, 0)
+AuthorText.BackgroundTransparency = 1
+
+-- ORIGINAL SCROLLING FRAMES (Unchanged)
+local SectionScroller = Instance.new("ScrollingFrame", HyperFrame)
+SectionScroller.Name = "SectionScroller"
+SectionScroller.Size = UDim2.new(0.99375, 0, 0.18519, 0)
+SectionScroller.Position = UDim2.new(0, 0, 0.19259, 0)
+SectionScroller.BackgroundColor3 = Color3.fromRGB(158, 158, 158)
+SectionScroller.BorderSizePixel = 0
+SectionScroller.CanvasSize = UDim2.new(2, 0, 0, 0)
+SectionScroller.ScrollBarThickness = 5
+
+local TabScroller = Instance.new("ScrollingFrame", ScreenGui)
+TabScroller.Name = "TabScroller"
+TabScroller.Size = UDim2.new(0.43324, 0, 0.47682, 0)
+TabScroller.Position = UDim2.new(0.2752, 0, 0.43046, 0)
+TabScroller.BackgroundTransparency = 1
+TabScroller.BorderSizePixel = 0
+Instance.new("UICorner", TabScroller).CornerRadius = UDim.new(0, 30)
+
+-- LABELS
+local SectionLabel = Instance.new("TextLabel", HyperFrame)
+SectionLabel.Text = "< Sections >"
+SectionLabel.Position = UDim2.new(0, 0, 0.11852, 0)
+SectionLabel.Size = UDim2.new(0.2, 0, 0.07407, 0)
+SectionLabel.BackgroundTransparency = 1
+
+local TabSection = Instance.new("TextLabel", HyperFrame)
+TabSection.Text = "Tab"
+TabSection.Position = UDim2.new(-0.00625, 0, 0.39259, 0)
+TabSection.Size = UDim2.new(0.1125, 0, 0.07407, 0)
+TabSection.BackgroundTransparency = 1
+
+-- WINDOW BUTTONS
+local CloseBtn = Instance.new("TextButton", HyperFrame)
+CloseBtn.Text = "✖️"; CloseBtn.Position = UDim2.new(0.85625, 0, 0.02222, 0)
+CloseBtn.Size = UDim2.new(0.10625, 0, 0.14074, 0); CloseBtn.BackgroundTransparency = 1
+
+local MiniBtn = Instance.new("TextButton", HyperFrame)
+MiniBtn.Text = "➖"; MiniBtn.Position = UDim2.new(0.7125, 0, 0.00741, 0)
+MiniBtn.Size = UDim2.new(0.15, 0, 0.14815, 0); MiniBtn.BackgroundTransparency = 1
+
+---------------------------------------------------------
+-- 3. RIGHT CENTER UI (Hyper Hub Button + Image)
+---------------------------------------------------------
+-- Button is now on the LEFT side of the pair
+local HyperHubBtn = Instance.new("TextButton", ScreenGui)
+HyperHubBtn.Name = "HyperHubBtn"
+HyperHubBtn.Size = UDim2.new(0, 150, 0, 50)
+HyperHubBtn.Position = UDim2.new(1, -210, 0.5, -25) -- Placed on Right Side Center
+HyperHubBtn.Text = "Hyper Hub"
+HyperHubBtn.ZIndex = 10
+
+-- Image is now on the RIGHT side of the pair
+local DragIcon = Instance.new("ImageLabel", ScreenGui)
+DragIcon.Name = "DragIcon"
+DragIcon.Size = UDim2.new(0, 50, 0, 50)
+DragIcon.Position = UDim2.new(1, -60, 0.5, -25) -- Placed on far right edge
+DragIcon.Image = "rbxassetid://112459446074747"
+DragIcon.ZIndex = 10
+
+---------------------------------------------------------
+-- 4. THE SECOND FRAME (Confirmation Prompt)
+---------------------------------------------------------
+local function showConfirmFrame()
+	local ConfirmFrame = Instance.new("Frame", ScreenGui)
+	ConfirmFrame.Size = UDim2.new(0, 250, 0, 120)
+	ConfirmFrame.Position = UDim2.new(0.5, -125, 0.5, -60)
+	ConfirmFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	ConfirmFrame.ZIndex = 20
+	Instance.new("UICorner", ConfirmFrame)
+
+	local Msg = Instance.new("TextLabel", ConfirmFrame)
+	Msg.Size = UDim2.new(1, 0, 0.5, 0)
+	Msg.Text = "Would you like to Hide this UI?"
+	Msg.TextColor3 = Color3.new(1, 1, 1)
+	Msg.BackgroundTransparency = 1
+
+	local Yes = Instance.new("TextButton", ConfirmFrame)
+	Yes.Text = "Yes"; Yes.Size = UDim2.new(0.4, 0, 0.3, 0); Yes.Position = UDim2.new(0.05, 0, 0.6, 0)
+	Yes.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+
+	local No = Instance.new("TextButton", ConfirmFrame)
+	No.Text = "No"; No.Size = UDim2.new(0.4, 0, 0.3, 0); No.Position = UDim2.new(0.55, 0, 0.6, 0)
+	No.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+
+	Yes.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+	No.MouseButton1Click:Connect(function() ConfirmFrame:Destroy() end)
+end
+
+---------------------------------------------------------
+-- 5. INTERACTIVE LOGIC
+---------------------------------------------------------
+CloseBtn.MouseButton1Click:Connect(showConfirmFrame)
+
+MiniBtn.MouseButton1Click:Connect(function() 
+	HyperFrame.Visible = false 
+	TabScroller.Visible = false
+end)
+
+HyperHubBtn.MouseButton1Click:Connect(function() 
+	HyperFrame.Visible = true 
+	TabScroller.Visible = true
+end)
+
+-- Long Press Drag for Button and Image together
+local dragging = false
+local dragStart, startPos, iconStartPos
+local pressStartTime = 0
+
+local function onInputBegan(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		pressStartTime = tick()
+		task.delay(0.5, function()
+			if (tick() - pressStartTime) >= 0.5 and (UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) or input.UserInputState == Enum.UserInputState.Begin) then
+				dragging = true
+				dragStart = input.Position
+				startPos = HyperHubBtn.Position
+				iconStartPos = DragIcon.Position
+			end
+		end)
+	end
+end
+
+HyperHubBtn.InputBegan:Connect(onInputBegan)
+DragIcon.InputBegan:Connect(onInputBegan)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local delta = input.Position - dragStart
+		HyperHubBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		DragIcon.Position = UDim2.new(iconStartPos.X.Scale, iconStartPos.X.Offset + delta.X, iconStartPos.Y.Scale, iconStartPos.Y.Offset + delta.Y)
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false; pressStartTime = 0
+	end
+end)
 ArrowLabel.Size = UDim2.new(0, 30, 0, 30)
 ArrowLabel.Position = UDim2.new(0.5, 0, 0.05, 38)
 ArrowLabel.AnchorPoint = Vector2.new(0.5, 0)
