@@ -1,0 +1,163 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+-- 1. TOP-CENTER TOGGLE BUTTON
+local ScreenGui = Instance.new("ScreenGui", Players.LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "HyperField_Final"
+ScreenGui.ResetOnSpawn = false
+
+local OpenButton = Instance.new("TextButton", ScreenGui)
+OpenButton.Size = UDim2.new(0, 240, 0, 35)
+OpenButton.Position = UDim2.new(0.5, 0, 0.05, 0)
+OpenButton.AnchorPoint = Vector2.new(0.5, 0)
+OpenButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+OpenButton.Text = "Hyper Hub"
+OpenButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+OpenButton.Font = Enum.Font.SourceSans
+OpenButton.TextSize = 20
+Instance.new("UICorner", OpenButton).CornerRadius = UDim.new(0, 10)
+
+local ArrowLabel = Instance.new("TextLabel", ScreenGui)
+ArrowLabel.Size = UDim2.new(0, 30, 0, 30)
+ArrowLabel.Position = UDim2.new(0.5, 0, 0.05, 38)
+ArrowLabel.AnchorPoint = Vector2.new(0.5, 0)
+ArrowLabel.BackgroundTransparency = 1
+ArrowLabel.Text = "↓"
+ArrowLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+ArrowLabel.TextSize = 40
+
+------------------------------------------------------------------
+-- 2. MAIN WINDOW (500x300)
+------------------------------------------------------------------
+local Main = Instance.new("Frame", ScreenGui)
+Main.Size = UDim2.new(0, 500, 0, 300)
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.Position = UDim2.new(0.5, 0, 0.5, 0) 
+Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Main.Visible = false 
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(0, 150, 0, 30)
+Title.Position = UDim2.new(0, 15, 0, 8)
+Title.BackgroundTransparency = 1
+Title.Text = "HyperField"
+Title.TextColor3 = Color3.fromRGB(180, 180, 180)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+
+local Destroyer = Instance.new("TextButton", Main)
+Destroyer.Size = UDim2.new(0, 30, 0, 30)
+Destroyer.Position = UDim2.new(1, -35, 0, 8)
+Destroyer.BackgroundTransparency = 1
+Destroyer.Text = "✖️"
+Destroyer.TextColor3 = Color3.fromRGB(120, 120, 120)
+Destroyer.TextSize = 18
+
+------------------------------------------------------------------
+-- 3. THE SCROLLING BAR (SLIM SIZE)
+------------------------------------------------------------------
+local SectionScroll = Instance.new("ScrollingFrame", Main)
+SectionScroll.Name = "HorizontalScroll"
+SectionScroll.Size = UDim2.new(1, -30, 0, 50)
+SectionScroll.Position = UDim2.new(0, 15, 0, 45)
+SectionScroll.BackgroundTransparency = 1
+SectionScroll.BorderSizePixel = 0
+-- SET SCROLL BAR SIZE TO BE SLIM
+SectionScroll.ScrollBarThickness = 2
+SectionScroll.ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255)
+SectionScroll.ScrollingDirection = Enum.ScrollingDirection.X
+SectionScroll.AutomaticCanvasSize = Enum.AutomaticSize.X
+
+local SectionLayout = Instance.new("UIListLayout", SectionScroll)
+SectionLayout.FillDirection = Enum.FillDirection.Horizontal
+SectionLayout.Padding = UDim.new(0, 10)
+SectionLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+------------------------------------------------------------------
+-- 4. TAB CREATOR (WHITE COLOR)
+------------------------------------------------------------------
+local function AddSection(name)
+	local Btn = Instance.new("TextButton", SectionScroll)
+	Btn.Size = UDim2.new(0, 110, 0, 32)
+	Btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- WHITE TAB
+	Btn.Text = name
+	Btn.TextColor3 = Color3.fromRGB(0, 0, 0) -- BLACK TEXT
+	Btn.Font = Enum.Font.GothamBold
+	Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+	return Btn
+end
+
+-- Sections to make it scroll
+AddSection("Combat")
+AddSection("Visuals")
+AddSection("Movement")
+AddSection("Player")
+AddSection("Misc")
+AddSection("Settings")
+
+------------------------------------------------------------------
+-- 5. CLOSE CONFIRMATION (CONTINUE / NO)
+------------------------------------------------------------------
+local Overlay = Instance.new("Frame", ScreenGui)
+Overlay.Size = UDim2.new(1, 0, 1, 0)
+Overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Overlay.BackgroundTransparency = 0.6
+Overlay.Visible = false
+Overlay.ZIndex = 10
+
+local ConfirmBox = Instance.new("Frame", Overlay)
+ConfirmBox.Size = UDim2.new(0, 300, 0, 150)
+ConfirmBox.Position = UDim2.new(0.5, 0, 0.5, 0)
+ConfirmBox.AnchorPoint = Vector2.new(0.5, 0.5)
+ConfirmBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", ConfirmBox)
+
+local Question = Instance.new("TextLabel", ConfirmBox)
+Question.Size = UDim2.new(1, 0, 0, 60)
+Question.BackgroundTransparency = 1
+Question.Text = "Would you like to Hide this UI?"
+Question.TextColor3 = Color3.fromRGB(255, 255, 255)
+Question.TextSize = 16
+
+local ContinueBtn = Instance.new("TextButton", ConfirmBox)
+ContinueBtn.Size = UDim2.new(0, 100, 0, 35)
+ContinueBtn.Position = UDim2.new(0.5, -110, 0.65, 0)
+ContinueBtn.Text = "Continue"
+ContinueBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+ContinueBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Instance.new("UICorner", ContinueBtn)
+
+local NoBtn = Instance.new("TextButton", ConfirmBox)
+NoBtn.Size = UDim2.new(0, 100, 0, 35)
+NoBtn.Position = UDim2.new(0.5, 10, 0.65, 0)
+NoBtn.Text = "NO"
+NoBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+NoBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Instance.new("UICorner", NoBtn)
+
+------------------------------------------------------------------
+-- 6. LOGIC
+------------------------------------------------------------------
+OpenButton.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible end)
+Destroyer.MouseButton1Click:Connect(function() Overlay.Visible = true end)
+NoBtn.MouseButton1Click:Connect(function() Overlay.Visible = false end)
+ContinueBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+
+-- DRAG SCRIPT
+local dragging, dragStart, startPos
+Title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true; dragStart = input.Position; startPos = Main.Position
+	end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
